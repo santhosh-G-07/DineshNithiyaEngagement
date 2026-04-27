@@ -741,6 +741,64 @@ h2 {
   transform: scaleX(-1);
 }
 
+.calendar-picker {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.calendar-trigger {
+  list-style: none;
+  width: 100%;
+  border-radius: 11px;
+  border: 1px solid rgba(112, 150, 167, 0.42);
+  padding: 10px 12px;
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue-500);
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition: background 220ms ease, border-color 220ms ease;
+}
+
+.calendar-trigger::marker,
+.calendar-trigger::-webkit-details-marker {
+  display: none;
+}
+
+.calendar-picker[open] .calendar-trigger {
+  border-color: rgba(112, 150, 167, 0.7);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-menu {
+  margin-top: 8px;
+  display: grid;
+  gap: 7px;
+  padding: 9px;
+  border-radius: 12px;
+  border: 1px solid rgba(112, 150, 167, 0.34);
+  background: rgba(255, 255, 255, 0.9);
+}
+
+.calendar-link {
+  text-decoration: none;
+  border-radius: 10px;
+  border: 1px solid rgba(112, 150, 167, 0.28);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 8px 10px;
+  text-align: center;
+  color: var(--text-main);
+  font-size: 0.86rem;
+  transition: border-color 200ms ease, background 200ms ease;
+}
+
+.calendar-link:hover {
+  border-color: rgba(112, 150, 167, 0.58);
+  background: rgba(250, 252, 251, 0.98);
+}
+
 .footer-quote {
   margin: 0;
   font-family: var(--font-script);

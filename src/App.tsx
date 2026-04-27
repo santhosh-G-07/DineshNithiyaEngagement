@@ -15,6 +15,20 @@ type CountdownParts = {
 
 const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
 
+function formatCalendarDate(date: Date): string {
+  const year = date.getUTCFullYear()
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0')
+  const day = String(date.getUTCDate()).padStart(2, '0')
+  const hours = String(date.getUTCHours()).padStart(2, '0')
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0')
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0')
+  return `${year}${month}${day}T${hours}${minutes}${seconds}Z`
+}
+
+function escapeIcsText(value: string): string {
+  return value.replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;')
+}
+
 function buildCalendarCells(date: Date): Array<number | null> {
   const year = date.getFullYear()
   const month = date.getMonth()
@@ -139,6 +153,28 @@ function App() {
   const calendarTitle = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(EVENT_START)
   const calendarCells = useMemo(() => buildCalendarCells(EVENT_START), [])
   const eventDay = EVENT_START.getDate()
+  const eventTitle = 'Dinesh & Nithya Engagement Ceremony'
+  const eventDescription = `We are getting engaged. Join us with your blessings at ${VENUE}. Map: ${MAP_LINK}`
+  const googleCalendarLink = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(eventTitle)}&dates=${formatCalendarDate(EVENT_START)}/${formatCalendarDate(EVENT_END)}&details=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(VENUE)}&ctz=Asia/Kolkata`
+  const outlookCalendarLink = `https://outlook.live.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=${encodeURIComponent(eventTitle)}&startdt=${encodeURIComponent(EVENT_START.toISOString())}&enddt=${encodeURIComponent(EVENT_END.toISOString())}&body=${encodeURIComponent(eventDescription)}&location=${encodeURIComponent(VENUE)}`
+  const icsContent = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//DineshAndNithya//EngagementInvite//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    `UID:dinesh-nithya-engagement-${EVENT_START.getTime()}@engagement`,
+    `DTSTAMP:${formatCalendarDate(new Date())}`,
+    `DTSTART:${formatCalendarDate(EVENT_START)}`,
+    `DTEND:${formatCalendarDate(EVENT_END)}`,
+    `SUMMARY:${escapeIcsText(eventTitle)}`,
+    `DESCRIPTION:${escapeIcsText(eventDescription)}`,
+    `LOCATION:${escapeIcsText(VENUE)}`,
+    'END:VEVENT',
+    'END:VCALENDAR',
+  ].join('\r\n')
+  const icsDownloadLink = `data:text/calendar;charset=utf-8,${encodeURIComponent(icsContent)}`
 
   return (
     <div className="invite-root">
@@ -247,6 +283,20 @@ function App() {
           <a className="gold-btn" href="#venue">
             View Venue
           </a>
+          <details className="calendar-picker">
+            <summary className="calendar-trigger">Add To Calendar</summary>
+            <div className="calendar-menu">
+              <a className="calendar-link" href={googleCalendarLink} target="_blank" rel="noreferrer">
+                Google Calendar
+              </a>
+              <a className="calendar-link" href={outlookCalendarLink} target="_blank" rel="noreferrer">
+                Outlook Calendar
+              </a>
+              <a className="calendar-link" href={icsDownloadLink} download="dinesh-nithya-engagement.ics">
+                Download .ics File
+              </a>
+            </div>
+          </details>
         </section>
 
         <section className="invite-panel countdown-panel reveal-4" data-reveal>
