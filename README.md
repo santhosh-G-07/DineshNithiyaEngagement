@@ -1,4 +1,4 @@
-# Dinesh & Nithiya Engagement Invite
+# Dinesh & Nithya Engagement Invite
 
 A React + Vite engagement invitation website.
 

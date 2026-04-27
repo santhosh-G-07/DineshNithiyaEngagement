@@ -13,6 +13,26 @@ type CountdownParts = {
   started: boolean
 }
 
+const WEEKDAY_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
+function buildCalendarCells(date: Date): Array<number | null> {
+  const year = date.getFullYear()
+  const month = date.getMonth()
+  const firstDay = new Date(year, month, 1).getDay()
+  const totalDays = new Date(year, month + 1, 0).getDate()
+  const cells: Array<number | null> = Array.from({ length: firstDay }, () => null)
+
+  for (let day = 1; day <= totalDays; day += 1) {
+    cells.push(day)
+  }
+
+  while (cells.length % 7 !== 0) {
+    cells.push(null)
+  }
+
+  return cells
+}
+
 function getCountdownParts(target: Date): CountdownParts {
   const now = Date.now()
   const distance = target.getTime() - now
@@ -116,6 +136,9 @@ function App() {
   }).format(EVENT_END)}`
 
   const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(VENUE)}&output=embed`
+  const calendarTitle = new Intl.DateTimeFormat('en-IN', { month: 'long', year: 'numeric' }).format(EVENT_START)
+  const calendarCells = useMemo(() => buildCalendarCells(EVENT_START), [])
+  const eventDay = EVENT_START.getDate()
 
   return (
     <div className="invite-root">
@@ -124,7 +147,7 @@ function App() {
         <div className="prelude-curtain prelude-right" />
         <div className="prelude-center">
           <p className="prelude-kicker">Engagement Invitation</p>
-          <p className="prelude-couple">Dinesh & Nithiya</p>
+          <p className="prelude-couple">Dinesh & Nithya</p>
         </div>
       </div>
 
@@ -146,22 +169,24 @@ function App() {
           />
         ))}
       </div>
+      <div className="floral-edge floral-left" aria-hidden="true" />
+      <div className="floral-edge floral-right" aria-hidden="true" />
 
       <main className="invite-shell">
         <section className="invite-panel family-panel reveal-1" data-reveal>
           <div className="family-grid">
             <article className="family-card">
               <p className="family-names">
-                Govarthanan
+                GOVARTHANAN
                 <br />
-                Kalai Selvi
+                KALAI SELVI
               </p>
             </article>
             <article className="family-card">
               <p className="family-names">
-                Govindan
+                GOVINDAN
                 <br />
-                Vijaya
+                VIJAYA
               </p>
             </article>
           </div>
@@ -170,7 +195,7 @@ function App() {
 
         <section className="invite-panel hero-panel reveal-2" data-reveal>
           <h1 className="couple-name">
-            Dinesh <span>&</span> Nithiya
+            Dinesh <span>&</span> Nithya
           </h1>
           <p className="hero-copy">Please join us with your blessings as we celebrate this beautiful beginning.</p>
           <div className="ornament-line" />
@@ -199,6 +224,25 @@ function App() {
           <div className="date-card">
             <p className="date-main">{formattedDate}</p>
             <p className="date-sub">{formattedTime}</p>
+          </div>
+          <div className="mini-calendar" role="group" aria-label={`Calendar for ${calendarTitle}`}>
+            <p className="calendar-month">{calendarTitle}</p>
+            <div className="calendar-weekdays" aria-hidden="true">
+              {WEEKDAY_LABELS.map((dayName) => (
+                <span key={dayName}>{dayName}</span>
+              ))}
+            </div>
+            <div className="calendar-grid">
+              {calendarCells.map((day, index) => {
+                const isEventDate = day === eventDay
+                const classes = `calendar-day${day ? '' : ' calendar-empty'}${isEventDate ? ' calendar-day-highlight' : ''}`
+                return (
+                  <span key={`${day ?? 'empty'}-${index}`} className={classes} aria-label={isEventDate ? `${day} highlighted date` : undefined}>
+                    {day ?? ''}
+                  </span>
+                )
+              })}
+            </div>
           </div>
           <a className="gold-btn" href="#venue">
             View Venue
@@ -265,7 +309,7 @@ function App() {
 
         <footer className="invite-panel footer-panel reveal-7" data-reveal>
           <p className="footer-quote">Your presence and blessings are the best gift for us.</p>
-          <p className="footer-sign">With love, Dinesh & Nithiya</p>
+          <p className="footer-sign">With love, Dinesh & Nithya</p>
         </footer>
       </main>
     </div>
